@@ -331,7 +331,7 @@
         event.preventDefault();
 
         const countryPrefix = countryCode.value.replace(/\D/g, '');
-        let userNumber = sanitizePhone(phoneInput.value);
+        const userNumber = sanitizePhone(phoneInput.value);
 
         if (!userNumber) {
           showError(true);
@@ -339,11 +339,10 @@
           return;
         }
 
-        if (!userNumber.startsWith(countryPrefix)) {
-          userNumber = countryPrefix + userNumber;
-        }
-
-        const finalNumber = userNumber.replace(/^0+/, '');
+        // Accept numbers entered with or without the selected country prefix.
+        const finalNumber = userNumber.startsWith(countryPrefix)
+          ? userNumber
+          : countryPrefix + userNumber;
 
         if (!/^\d{7,15}$/.test(finalNumber)) {
           showError(true);
