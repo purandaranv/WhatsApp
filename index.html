@@ -1,142 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Open WhatsApp Chat</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background-color: #f0f2f5;
-      padding: 1rem;
-    }
-
-    .card {
-      background: #ffffff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 400px;
-    }
-
-    h2 {
-      color: #111b21;
-      margin-bottom: 0.5rem;
-      font-size: 1.4rem;
-    }
-
-    p {
-      color: #667781;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.4;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #3b4a54;
-      margin-bottom: 0.5rem;
-    }
-
-    input[type="tel"] {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      border: 1px solid #d1d7db;
-      border-radius: 8px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input[type="tel"]:focus {
-      border-color: #25d366;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 1rem;
-      padding: 0.85rem;
-      background-color: #25d366;
-      color: #ffffff;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: #1ebe5d;
-    }
-
-    .error {
-      color: #d32f2f;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="card">
-    <h2>WhatsApp Direct Chat</h2>
-    <p>Enter the mobile number with its country code (e.g. <code>919876543210</code> or <code>+1 555 123 4567</code>).</p>
-
-    <form id="waForm">
-      <label for="phone">Mobile Number</label>
-      <input 
-        type="tel" 
-        id="phone" 
-        placeholder="e.g. 919876543210" 
-        required 
-        autocomplete="tel"
-      />
-      <div id="errorMsg" class="error">Please enter a valid phone number with country code.</div>
-
-      <button type="submit">Open Chat</button>
-    </form>
-  </div>
-
-  <script>
-    const form = document.getElementById('waForm');
-    const phoneInput = document.getElementById('phone');
-    const errorMsg = document.getElementById('errorMsg');
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      // Remove '+' symbols, spaces, and all other non-digit characters.
-      let cleanNumber = phoneInput.value.replace(/\D/g, '');
-      // Remove any leading zeros before validating the international number.
-      cleanNumber = cleanNumber.replace(/^0+/, '');
-
-      // Validation check
-      if (!/^\d{7,15}$/.test(cleanNumber)) {
-        errorMsg.style.display = 'block';
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Open a WhatsApp chat directly using a phone number with country code."
+    />
+    <title>WhatsApp Direct Chat</title>
+    <style>
+      :root {
+        --bg-start: #f0f2f5;
+        --bg-end: #dfeaf2;
+        --card-bg: rgba(255, 255, 255, 0.9);
+        --primary: #25d366;
+        --primary-dark: #1ea95b;
+        --text: #111b21;
+        --muted: #667781;
+        --line: #dfe6eb;
+        --danger: #d93025;
+        --danger-bg: #fdecea;
+        --shadow: 0 16px 40px rgba(17, 27, 33, 0.12);
       }
 
-      errorMsg.style.display = 'none';
+      * {
+        box-sizing: border-box;
+      }
 
-      // Direct redirection to avoid pop-up blockers
-      window.location.href = `https://api.whatsapp.com/send?phone=${cleanNumber}`;
-    });
-  </script>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
 
-</body>
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+        color: var(--text);
+      }
+
+      .card {
+        width: min(100%, 440px);
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        padding: 2rem 1.5rem 1.5rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .brand-mark {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #1ae279, #25d366);
+        display: grid;
+        place-items: center;
+        color: white;
+        box-shadow: 0 12px 24px rgba(37, 211, 102, 0.28);
+        font-size: 1.6rem;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(1.5rem, 2vw, 2rem);
+        font-weight: 700;
+      }
+
+      .subtitle {
+        margin: 0 0 1.5rem;
+        color: var(--muted);
+        font-size: 0.96rem;
+        line-height: 1.55;
+      }
+
+      .field {
+        margin-bottom: 1rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #31444d;
+      }
+
+      .input-wrap {
+        position: relative;
+      }
+
+      .input-wrap::before {
+        content: "+";
+        position: absolute;
+        left: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        color: #54656f;
+        pointer-events: none;
+      }
+
+      input[type="tel"] {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #f9fbfd;
+        border-radius: 12px;
+        padding: 0.95rem 1rem 0.95rem 2.3rem;
+        font-size: 1rem;
+        color: var(--text);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      }
+
+      input[type="tel"]::placeholder {
+        color: #8696a0;
+      }
+
+      input[type="tel"]:focus {
+        outline: none;
+        border-color: rgba(37, 211, 102, 0.9);
+        box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.14);
+        background: white;
+      }
+
+      .error {
+        min-height: 1.25rem;
+        margin-top: 0.5rem;
+        color: var(--danger);
+        background: var(--danger-bg);
+        border: 1px solid rgba(217, 48, 37, 0.12);
+        border-radius: 8px;
+        padding: 0.45rem 0.75rem;
+        font-size: 0.82rem;
+        display: none;
+      }
+
+      .error.visible {
+        display: block;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.95rem 1rem;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        box-shadow: 0 12px 24px rgba(37, 211, 102, 0.22);
+      }
+
+      button:hover {
+        filter: brightness(1.03);
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .helper {
+        margin-top: 0.85rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .helper code {
+        background: rgba(37, 211, 102, 0.08);
+        border-radius: 6px;
+        padding: 0.12rem 0.35rem;
+        color: #0f8062;
+      }
+
+      @media (max-width: 420px) {
+        .card {
+          padding: 1.5rem 1rem 1rem;
+        }
+
+        .brand {
+          margin-bottom: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card" aria-label="WhatsApp chat starter">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">✆</div>
+        <h2>WhatsApp Direct Chat</h2>
+      </div>
+
+      <p class="subtitle">
+        Enter your phone number with the country code to open a WhatsApp chat instantly.
+      </p>
+
+      <form id="waForm" novalidate>
+        <div class="field">
+          <label for="phone">Mobile Number</label>
+          <div class="input-wrap">
+            <input
+              type="tel"
+              id="phone"
+              inputmode="numeric"
+              autocomplete="tel"
+              placeholder="e.g. 919876543210"
+              aria-describedby="errorMsg"
+              aria-invalid="false"
+              required
+            />
+          </div>
+          <div id="errorMsg" class="error" role="alert" aria-live="polite">
+            Please enter a valid phone number with country code.
+          </div>
+        </div>
+
+        <button type="submit">Open Chat</button>
+      </form>
+
+      <div class="helper">
+        Example: <code>919876543210</code> or <code>+1 555 123 4567</code>
+      </div>
+    </main>
+
+    <script>
+      const form = document.getElementById('waForm');
+      const phoneInput = document.getElementById('phone');
+      const errorMsg = document.getElementById('errorMsg');
+
+      function sanitizePhone(value) {
+        const cleaned = value.replace(/[^\d]/g, '').replace(/^0+/, '');
+        return cleaned;
+      }
+
+      function showError(show) {
+        errorMsg.classList.toggle('visible', show);
+        phoneInput.setAttribute('aria-invalid', String(show));
+      }
+
+      phoneInput.addEventListener('input', () => {
+        phoneInput.value = phoneInput.value.replace(/[^\d+\s()-]/g, '');
+        showError(false);
+      });
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const cleanNumber = sanitizePhone(phoneInput.value);
+
+        if (!/^\d{7,15}$/.test(cleanNumber)) {
+          showError(true);
+          phoneInput.focus();
+          return;
+        }
+
+        showError(false);
+        window.location.href = `https://api.whatsapp.com/send?phone=${cleanNumber}`;
+      });
+    </script>
+  </body>
 </html>
