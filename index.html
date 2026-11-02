@@ -7,11 +7,11 @@
     <title>WhatsApp Direct Chat</title>
     <style>
       :root {
-        --bg: #f5f7fb;
-        --bg-strong: #edf8f1;
-        --panel: rgba(255, 255, 255, 0.82);
-        --panel-solid: #ffffff;
-        --panel-soft: #f4f7fa;
+        --bg: #f3f7fb;
+        --bg-accent: #eafaf0;
+        --panel: rgba(255, 255, 255, 0.9);
+        --panel-strong: #ffffff;
+        --panel-soft: #f5f8fb;
         --line: rgba(17, 27, 33, 0.08);
         --line-strong: rgba(17, 27, 33, 0.12);
         --primary: #25d366;
@@ -19,19 +19,16 @@
         --secondary: #075e54;
         --text: #111b21;
         --muted: #667781;
-        --muted-2: #8a99a5;
         --danger: #d93025;
         --danger-bg: #fff1ee;
-        --shadow: 0 26px 48px rgba(17, 27, 33, 0.12);
-        --glow: rgba(37, 211, 102, 0.18);
-        --card-shadow: 0 16px 32px rgba(17, 27, 33, 0.08);
+        --shadow: 0 24px 60px rgba(17, 27, 33, 0.12);
       }
 
       body.dark {
-        --bg: #07151c;
-        --bg-strong: #0b1e1e;
-        --panel: rgba(17, 27, 33, 0.85);
-        --panel-solid: #111b21;
+        --bg: #06171d;
+        --bg-accent: #0d201f;
+        --panel: rgba(17, 27, 33, 0.82);
+        --panel-strong: #111b21;
         --panel-soft: #172229;
         --line: rgba(255, 255, 255, 0.08);
         --line-strong: rgba(255, 255, 255, 0.14);
@@ -40,238 +37,45 @@
         --secondary: #88e8ad;
         --text: #ecf4f9;
         --muted: #b7c5cf;
-        --muted-2: #94a8b7;
         --danger: #ff8d8d;
         --danger-bg: rgba(255, 122, 122, 0.12);
-        --shadow: 0 26px 60px rgba(0, 0, 0, 0.38);
-        --glow: rgba(37, 211, 102, 0.2);
-        --card-shadow: 0 20px 38px rgba(0, 0, 0, 0.25);
+        --shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
       }
 
-      * { box-sizing: border-box; }
-
-      html {
-        scroll-behavior: smooth;
+      * {
+        box-sizing: border-box;
       }
 
-      body {
+      html, body {
         margin: 0;
-        min-height: 100vh;
+        min-height: 100%;
+        height: 100%;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background: radial-gradient(circle at top left, rgba(37, 211, 102, 0.08), transparent 26%), linear-gradient(135deg, var(--bg) 0%, var(--bg-strong) 100%);
+        background: radial-gradient(circle at top left, rgba(37, 211, 102, 0.08), transparent 25%), linear-gradient(135deg, var(--bg) 0%, var(--bg-accent) 100%);
         color: var(--text);
         transition: background 0.25s ease, color 0.25s ease;
       }
 
-      a { color: inherit; text-decoration: none; }
-      img { max-width: 100%; display: block; }
-      button, input, select { font: inherit; }
-
-      .wrapper {
-        width: min(1200px, calc(100% - 32px));
-        margin: 0 auto;
-      }
-
-      .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        backdrop-filter: blur(14px);
-        background: rgba(245, 247, 251, 0.72);
-        border-bottom: 1px solid var(--line);
-      }
-
-      body.dark .site-header {
-        background: rgba(7, 21, 28, 0.7);
-      }
-
-      .header-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        padding: 1rem 0;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
-
-      .brand-mark {
-        width: 42px;
-        height: 42px;
-        border-radius: 14px;
+      body {
         display: grid;
         place-items: center;
-        background: linear-gradient(135deg, #1ae279, var(--primary));
-        color: white;
-        box-shadow: 0 14px 24px rgba(37, 211, 102, 0.26);
-        font-size: 1.3rem;
+        padding: 24px;
       }
 
-      .nav {
-        display: flex;
-        align-items: center;
-        gap: 1.25rem;
-        color: var(--muted);
-        font-size: 0.95rem;
+      button, input, select {
+        font: inherit;
       }
 
-      .nav a {
-        transition: color 0.2s ease;
+      .chat-shell {
+        width: min(100%, 420px);
       }
 
-      .nav a:hover {
-        color: var(--text);
-      }
-
-      .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-      }
-
-      .theme-toggle {
-        background: var(--panel-solid);
-        border: 1px solid var(--line);
-        color: var(--text);
-        border-radius: 999px;
-        padding: 0.7rem 1rem;
-        cursor: pointer;
-        font-weight: 600;
-      }
-
-      .cta-button,
-      .button-primary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        border-radius: 14px;
-        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
-        color: white;
-        font-weight: 700;
-        padding: 0.92rem 1.3rem;
-        box-shadow: 0 14px 28px rgba(37, 211, 102, 0.18);
-        cursor: pointer;
-        transition: transform 0.2s ease, filter 0.2s ease;
-      }
-
-      .cta-button:hover,
-      .button-primary:hover {
-        transform: translateY(-1px);
-        filter: brightness(1.02);
-      }
-
-      .hero {
-        padding: 4.8rem 0 3.5rem;
-      }
-
-      .hero-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 2rem;
-        align-items: center;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        padding: 0.45rem 0.8rem;
-        border-radius: 999px;
-        background: rgba(37, 211, 102, 0.1);
-        border: 1px solid rgba(37, 211, 102, 0.14);
-        color: var(--secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-size: 0.7rem;
-        font-weight: 800;
-      }
-
-      h1 {
-        font-size: clamp(2.8rem, 5vw, 5rem);
-        line-height: 0.96;
-        letter-spacing: -0.06em;
-        margin: 1.2rem 0 1rem;
-      }
-
-      .lead {
-        max-width: 620px;
-        color: var(--muted);
-        font-size: 1.08rem;
-        line-height: 1.7;
-        margin: 0;
-      }
-
-      .hero-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-top: 2rem;
-      }
-
-      .secondary-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 14px;
-        border: 1px solid var(--line-strong);
-        background: rgba(255,255,255,0.15);
-        color: var(--text);
-        font-weight: 700;
-        padding: 0.92rem 1.3rem;
-      }
-
-      .mini-metrics {
-        margin-top: 2.5rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.3rem;
-      }
-
-      .metric {
-        min-width: 120px;
-      }
-
-      .metric strong {
-        display: block;
-        font-size: 1.6rem;
-        letter-spacing: -0.05em;
-      }
-
-      .metric span {
-        color: var(--muted);
-        font-size: 0.82rem;
-      }
-
-      .dashboard-card {
-        position: relative;
+      .chat-card {
         background: var(--panel);
         border: 1px solid var(--line);
-        border-radius: 32px;
+        border-radius: 30px;
         box-shadow: var(--shadow);
-        padding: 1.2rem;
-      }
-
-      .dashboard-card::before {
-        content: "";
-        position: absolute;
-        width: 260px;
-        height: 260px;
-        background: radial-gradient(circle, rgba(37, 211, 102, 0.18), transparent 62%);
-        top: -60px;
-        right: -30px;
-      }
-
-      .chat-panel {
-        position: relative;
-        z-index: 1;
-        background: var(--panel-solid);
-        border: 1px solid var(--line);
-        border-radius: 28px;
+        backdrop-filter: blur(14px);
         overflow: hidden;
       }
 
@@ -279,432 +83,208 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 1rem 1.1rem;
+        gap: 12px;
+        padding: 18px 20px 16px;
         background: linear-gradient(180deg, rgba(37, 211, 102, 0.12), rgba(37, 211, 102, 0.03));
         border-bottom: 1px solid var(--line);
       }
 
-      .chat-title {
+      .brand {
         display: flex;
         align-items: center;
-        gap: 0.7rem;
+        gap: 10px;
         font-weight: 700;
+        letter-spacing: -0.02em;
       }
 
-      .avatar {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #1ae279, var(--primary));
-        display: grid;
-        place-items: center;
-        color: white;
-        font-size: 1rem;
-      }
-
-      .online-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: var(--primary);
-        box-shadow: 0 0 12px rgba(37, 211, 102, 0.9);
-      }
-
-      .chat-window {
-        padding: 1rem 1rem 0.5rem;
-        display: grid;
-        gap: 0.7rem;
-      }
-
-      .bubble {
-        max-width: 82%;
-        padding: 0.8rem 0.9rem;
-        border-radius: 18px;
-        line-height: 1.5;
-        font-size: 0.96rem;
-      }
-
-      .bubble.incoming {
-        background: var(--panel-soft);
-        border: 1px solid var(--line);
-        color: var(--text);
-      }
-
-      .bubble.outgoing {
-        margin-left: auto;
-        background: linear-gradient(135deg, #dcf8c6, #dff7d3);
-        color: #0f1720;
-        border: 1px solid rgba(56, 161, 68, 0.1);
-      }
-
-      .chat-form {
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-        padding: 1rem;
-        border-top: 1px solid var(--line);
-      }
-
-      .chat-input {
-        flex: 1;
-        border: 1px solid var(--line);
+      .brand-mark {
+        width: 38px;
+        height: 38px;
         border-radius: 12px;
-        padding: 0.8rem 0.9rem;
-        background: var(--panel-soft);
-        color: var(--text);
-      }
-
-      .send-button {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
         display: grid;
         place-items: center;
-        border: none;
-        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+        background: linear-gradient(135deg, #1ae279, var(--primary));
         color: white;
         font-size: 1.2rem;
+        box-shadow: 0 10px 18px rgba(37, 211, 102, 0.22);
+      }
+
+      .theme-toggle {
+        border: 1px solid var(--line-strong);
+        background: var(--panel-strong);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 0.58rem 0.9rem;
+        font-weight: 600;
         cursor: pointer;
       }
 
-      .features {
-        padding: 2rem 0 3rem;
+      .chat-body {
+        padding: 22px 20px 20px;
       }
 
-      .section-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-        gap: 1rem;
-        margin-bottom: 1.4rem;
+      .title {
+        margin: 0 0 6px;
+        font-size: clamp(1.7rem, 4vw, 2.2rem);
+        letter-spacing: -0.05em;
+        line-height: 1.05;
       }
 
-      .section-head h2 {
-        margin: 0;
-        font-size: clamp(2rem, 3vw, 3rem);
-        letter-spacing: -0.06em;
-      }
-
-      .section-head p {
-        margin: 0;
+      .subtitle {
+        margin: 0 0 18px;
         color: var(--muted);
+        font-size: 0.96rem;
         line-height: 1.6;
       }
 
-      .feature-grid {
+      form {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1.2rem;
+        gap: 1rem;
       }
 
-      .feature-card {
-        background: var(--panel);
+      .field {
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      label {
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .input-wrap {
+        display: flex;
+        align-items: center;
         border: 1px solid var(--line);
-        border-radius: 22px;
-        box-shadow: var(--card-shadow);
-        padding: 1.5rem;
+        border-radius: 16px;
+        background: var(--panel-soft);
+        padding: 0 0.8rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
       }
 
-      .icon {
-        width: 50px;
-        height: 50px;
-        display: grid;
-        place-items: center;
-        border-radius: 14px;
-        background: rgba(37, 211, 102, 0.1);
-        color: var(--secondary);
-        font-size: 1.4rem;
-        margin-bottom: 1rem;
+      .input-wrap:focus-within {
+        border-color: rgba(37, 211, 102, 0.6);
+        box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.12);
       }
 
-      .feature-card h3 {
-        margin: 0 0 0.6rem;
-        font-size: 1.2rem;
+      select,
+      input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        padding: 0.9rem 0.5rem;
       }
 
-      .feature-card p {
-        margin: 0;
+      select {
+        appearance: none;
+        cursor: pointer;
+      }
+
+      input::placeholder {
         color: var(--muted);
-        line-height: 1.7;
       }
 
-      .cta-strip {
-        padding: 0 0 6rem;
+      .error {
+        display: none;
+        min-height: 1.2rem;
+        padding: 0.7rem 0.8rem;
+        border-radius: 12px;
+        background: var(--danger-bg);
+        border: 1px solid rgba(217, 48, 37, 0.16);
+        color: var(--danger);
+        font-size: 0.88rem;
+        line-height: 1.5;
       }
 
-      .cta-box {
-        background: linear-gradient(135deg, rgba(37, 211, 102, 0.12), rgba(7, 94, 84, 0.08));
-        border: 1px solid rgba(37, 211, 102, 0.16);
-        border-radius: 30px;
-        padding: 2rem;
-        display: flex;
+      .button-primary {
+        display: inline-flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 2rem;
+        justify-content: center;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+        color: white;
+        font-weight: 700;
+        padding: 0.95rem 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 14px 28px rgba(37, 211, 102, 0.18);
+        transition: transform 0.2s ease, filter 0.2s ease;
       }
 
-      .cta-box h3 {
-        margin: 0 0 0.5rem;
-        font-size: clamp(1.8rem, 2vw, 2.7rem);
-        letter-spacing: -0.05em;
+      .button-primary:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.02);
       }
 
-      .cta-box p {
-        margin: 0;
-        color: var(--muted);
-      }
-
-      .site-footer {
-        border-top: 1px solid var(--line);
-        padding: 1.5rem 0 2.5rem;
-        color: var(--muted);
-      }
-
-      .footer-inner {
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .footer-links {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-
-      @media (max-width: 920px) {
-        .hero-grid,
-        .feature-grid,
-        .cta-box {
-          grid-template-columns: 1fr;
-          display: grid;
+      @media (max-width: 480px) {
+        body {
+          padding: 16px;
         }
 
-        .hero-grid {
-          gap: 1.6rem;
-        }
-
-        .cta-box {
-          justify-content: stretch;
-          align-items: flex-start;
-        }
-      }
-
-      @media (max-width: 680px) {
-        .nav {
-          display: none;
-        }
-
-        .header-inner {
-          padding: 0.9rem 0;
-        }
-
-        .hero {
-          padding-top: 2rem;
-        }
-
-        .hero-actions {
-          flex-direction: column;
-        }
-
-        .feature-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .cta-box {
-          padding: 1.4rem;
+        .chat-body {
+          padding: 18px 16px 18px;
         }
       }
     </style>
   </head>
   <body>
-    <header class="site-header">
-      <div class="wrapper header-inner">
-        <div class="brand" aria-label="WhatsApp Direct brand">
-          <div class="brand-mark" aria-hidden="true">✆</div>
-          <span>WhatsApp Direct</span>
+    <main class="chat-shell" aria-label="WhatsApp direct chat">
+      <div class="chat-card">
+        <div class="chat-header">
+          <div class="brand" aria-label="WhatsApp Direct brand">
+            <div class="brand-mark" aria-hidden="true">✆</div>
+            <span>WhatsApp Direct</span>
+          </div>
+          <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle color mode">Dark</button>
         </div>
 
-        <nav class="nav" aria-label="Main navigation">
-          <a href="#features">Features</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#about">About</a>
-        </nav>
+        <div class="chat-body">
+          <h1 class="title">Open chat</h1>
+          <p class="subtitle">Enter the country and number to launch the contact instantly.</p>
 
-        <div class="nav-actions">
-          <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle color mode">Dark mode</button>
-          <a class="cta-button" href="#chat">Try it now</a>
+          <form id="waForm" novalidate>
+            <div class="field">
+              <label for="countryCode">Country</label>
+              <div class="input-wrap">
+                <select id="countryCode" aria-label="Select country code">
+                  <option value="1">United States (+1)</option>
+                  <option value="44">United Kingdom (+44)</option>
+                  <option value="61">Australia (+61)</option>
+                  <option value="91" selected>India (+91)</option>
+                  <option value="971">UAE (+971)</option>
+                  <option value="966">Saudi Arabia (+966)</option>
+                  <option value="92">Pakistan (+92)</option>
+                  <option value="880">Bangladesh (+880)</option>
+                  <option value="234">Nigeria (+234)</option>
+                  <option value="27">South Africa (+27)</option>
+                  <option value="55">Brazil (+55)</option>
+                  <option value="52">Mexico (+52)</option>
+                  <option value="81">Japan (+81)</option>
+                  <option value="65">Singapore (+65)</option>
+                  <option value="33">France (+33)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="phone">Mobile number</label>
+              <div class="input-wrap">
+                <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="e.g. 9876543210" aria-label="Phone number" />
+              </div>
+            </div>
+
+            <div id="errorMsg" class="error" role="alert" aria-live="polite">Please enter a valid mobile number.</div>
+
+            <button class="button-primary" type="submit">Open WhatsApp</button>
+          </form>
         </div>
       </div>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div class="wrapper hero-grid">
-          <div>
-            <span class="eyebrow">Instant chat</span>
-            <h1>Open WhatsApp in one click.</h1>
-            <p class="lead">
-              Turn a contact number into a direct WhatsApp link with country validation, instant redirection, and a user-friendly experience built for mobile and desktop.
-            </p>
-
-            <div class="hero-actions">
-              <a class="button-primary" href="#chat">Get started</a>
-              <a class="secondary-button" href="#features">See features</a>
-            </div>
-
-            <div class="mini-metrics" aria-label="Product metrics">
-              <div class="metric">
-                <strong>10x</strong>
-                <span>faster</span>
-              </div>
-              <div class="metric">
-                <strong>99.9%</strong>
-                <span>reliability</span>
-              </div>
-              <div class="metric">
-                <strong>24/7</strong>
-                <span>ready</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="dashboard-card" id="chat">
-            <div class="chat-panel" aria-label="WhatsApp preview card">
-              <div class="chat-header">
-                <div class="chat-title">
-                  <div class="avatar" aria-hidden="true">W</div>
-                  <span>WhatsApp Direct</span>
-                </div>
-                <div class="online-dot" aria-label="Online status"></div>
-              </div>
-
-              <div class="chat-window">
-                <div class="bubble incoming">Hello! Need help opening a chat?</div>
-                <div class="bubble outgoing">Yes — just enter the phone number.</div>
-                <div class="bubble incoming">We’ll route it to the right WhatsApp contact.</div>
-              </div>
-
-              <div class="chat-form">
-                <input class="chat-input" type="text" value="919876543210" aria-label="Sample phone number" />
-                <button class="send-button" type="button" aria-label="Send">➤</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="features" id="features">
-        <div class="wrapper">
-          <div class="section-head">
-            <h2>Why teams use it</h2>
-            <p>Built to help you connect faster with the right contact in under a second.</p>
-          </div>
-
-          <div class="feature-grid">
-            <article class="feature-card">
-              <div class="icon" aria-hidden="true">⚡</div>
-              <h3>Fast routing</h3>
-              <p>Open the correct WhatsApp chat instantly with validated country codes and clean input handling.</p>
-            </article>
-
-            <article class="feature-card">
-              <div class="icon" aria-hidden="true">🔒</div>
-              <h3>Reliable validation</h3>
-              <p>Accept valid international numbers while preventing empty, broken, or manually incorrect entries.</p>
-            </article>
-
-            <article class="feature-card" id="how-it-works">
-              <div class="icon" aria-hidden="true">📱</div>
-              <h3>Mobile friendly</h3>
-              <p>Optimized for responsive customer support flows, landing pages, and contact funnels across devices.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="cta-strip" id="about">
-        <div class="wrapper">
-          <div class="cta-box">
-            <div>
-              <h3>Ready to start chatting instantly?</h3>
-              <p>Use the direct WhatsApp form below to open a contact in one click.</p>
-            </div>
-            <a class="button-primary" href="#form-card">Launch form</a>
-          </div>
-        </div>
-      </section>
     </main>
-
-    <aside class="wrapper" id="form-card" style="padding-bottom: 4rem;">
-      <div class="dashboard-card" style="max-width: 540px; margin: 0 auto;">
-        <div class="chat-panel" aria-label="Direct WhatsApp form wrapper">
-          <div class="chat-header">
-            <div class="chat-title">
-              <div class="avatar" aria-hidden="true">✆</div>
-              <span>Open chat</span>
-            </div>
-            <div class="status-badge" style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.38rem 0.72rem;border-radius:999px;background:rgba(37,211,102,0.12);color:var(--secondary);font-size:0.7rem;font-weight:700;">
-              <span class="online-dot" style="width:8px;height:8px;"></span>
-              Ready
-            </div>
-          </div>
-
-          <div style="padding:1.25rem;">
-            <form id="waForm" novalidate>
-              <div style="display:grid;gap:1rem;">
-                <div style="display:grid;gap:0.45rem;">
-                  <label for="countryCode" style="font-size:0.8rem;font-weight:700;color:var(--muted);letter-spacing:0.02em;">Country</label>
-                  <div style="display:flex;align-items:center;border:1px solid var(--line);background:var(--panel-soft);border-radius:16px;padding:0.15rem 0.8rem;transition:border-color 0.2s ease, box-shadow 0.2s ease;">
-                    <select id="countryCode" aria-label="Select country code" style="width:100%;background:transparent;border:none;outline:none;color:var(--text);padding:0.9rem 0.4rem;appearance:none;cursor:pointer;background-image:linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);background-position:calc(100% - 16px) calc(50% - 3px), calc(100% - 11px) calc(50% - 3px);background-size:5px 5px, 5px 5px;background-repeat:no-repeat;">
-                      <option value="1">United States (+1)</option>
-                      <option value="44">United Kingdom (+44)</option>
-                      <option value="61">Australia (+61)</option>
-                      <option value="91" selected>India (+91)</option>
-                      <option value="971">UAE (+971)</option>
-                      <option value="966">Saudi Arabia (+966)</option>
-                      <option value="92">Pakistan (+92)</option>
-                      <option value="880">Bangladesh (+880)</option>
-                      <option value="234">Nigeria (+234)</option>
-                      <option value="27">South Africa (+27)</option>
-                      <option value="55">Brazil (+55)</option>
-                      <option value="52">Mexico (+52)</option>
-                      <option value="81">Japan (+81)</option>
-                      <option value="65">Singapore (+65)</option>
-                      <option value="33">France (+33)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div style="display:grid;gap:0.45rem;">
-                  <label for="phone" style="font-size:0.8rem;font-weight:700;color:var(--muted);letter-spacing:0.02em;">Mobile number</label>
-                  <div style="display:flex;align-items:center;border:1px solid var(--line);background:var(--panel-soft);border-radius:16px;padding:0 0.8rem;transition:border-color 0.2s ease, box-shadow 0.2s ease;">
-                    <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="e.g. 9876543210" aria-label="Phone number" style="width:100%;background:transparent;border:none;outline:none;color:var(--text);padding:0.95rem 0.2rem;" />
-                  </div>
-                </div>
-
-                <div id="errorMsg" role="alert" aria-live="polite" style="display:none;min-height:1.2rem;color:var(--danger);background:var(--danger-bg);border:1px solid rgba(217,48,37,0.14);border-radius:10px;padding:0.5rem 0.7rem;font-size:0.8rem;">Please enter a valid phone number with country code.</div>
-
-                <button class="button-primary" type="submit" style="width:100%;">Open WhatsApp</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <footer class="site-footer">
-      <div class="wrapper footer-inner">
-        <div>© 2026 WhatsApp Direct</div>
-        <div class="footer-links">
-          <a href="#features">Features</a>
-          <a href="#about">About</a>
-          <a href="#chat">Open chat</a>
-        </div>
-      </div>
-    </footer>
 
     <script>
       const form = document.getElementById('waForm');
@@ -720,9 +300,9 @@
 
         if (darkMode) {
           document.body.classList.add('dark');
-          themeToggle.textContent = 'Light mode';
+          themeToggle.textContent = 'Light';
         } else {
-          themeToggle.textContent = 'Dark mode';
+          themeToggle.textContent = 'Dark';
         }
       }
 
@@ -730,8 +310,9 @@
         return value.replace(/\D/g, '').replace(/^0+/, '');
       }
 
-      function showError(show) {
+      function showError(show, message = 'Please enter a valid mobile number.') {
         errorMsg.style.display = show ? 'block' : 'none';
+        errorMsg.textContent = message;
         phoneInput.setAttribute('aria-invalid', String(show));
       }
 
@@ -743,7 +324,7 @@
       themeToggle.addEventListener('click', () => {
         const isDark = document.body.classList.toggle('dark');
         localStorage.setItem('whatsapp-theme', isDark ? 'dark' : 'light');
-        themeToggle.textContent = isDark ? 'Light mode' : 'Dark mode';
+        themeToggle.textContent = isDark ? 'Light' : 'Dark';
       });
 
       form.addEventListener('submit', function (event) {
