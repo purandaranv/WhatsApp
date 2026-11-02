@@ -3,147 +3,311 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Open a WhatsApp chat directly using a phone number with country code."
-    />
+    <meta name="description" content="Open WhatsApp chats instantly with a phone number and country code." />
     <title>WhatsApp Direct Chat</title>
     <style>
       :root {
-        --bg-start: #f0f2f5;
-        --bg-end: #dfeaf2;
-        --card-bg: rgba(255, 255, 255, 0.9);
+        --bg: #f6f7fb;
+        --bg-accent: #edf7f0;
+        --panel: rgba(255, 255, 255, 0.85);
+        --panel-strong: #ffffff;
+        --panel-soft: #f4f8fb;
+        --line: #dfe7ee;
         --primary: #25d366;
-        --primary-dark: #1ea95b;
+        --primary-strong: #1ea95b;
+        --secondary: #075e54;
         --text: #111b21;
         --muted: #667781;
-        --line: #dfe6eb;
         --danger: #d93025;
-        --danger-bg: #fdecea;
-        --shadow: 0 16px 40px rgba(17, 27, 33, 0.12);
+        --danger-bg: #fff0ee;
+        --shadow: 0 22px 50px rgba(17, 27, 33, 0.12);
+        --glow: rgba(37, 211, 102, 0.12);
+      }
+
+      body.dark {
+        --bg: #0b141a;
+        --bg-accent: #0f1f1d;
+        --panel: rgba(17, 27, 33, 0.86);
+        --panel-strong: #111b21;
+        --panel-soft: #172229;
+        --line: rgba(255, 255, 255, 0.08);
+        --primary: #25d366;
+        --primary-strong: #1ea95b;
+        --secondary: #8ae0a1;
+        --text: #e9f2f7;
+        --muted: #b4c3cf;
+        --danger: #ff7a7a;
+        --danger-bg: rgba(255, 96, 96, 0.1);
+        --shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+        --glow: rgba(37, 211, 102, 0.18);
       }
 
       * {
         box-sizing: border-box;
       }
 
-      html,
-      body {
+      html, body {
         margin: 0;
         min-height: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       }
 
       body {
+        background: linear-gradient(135deg, var(--bg) 0%, var(--bg-accent) 100%);
+        color: var(--text);
+        min-height: 100vh;
         display: grid;
         place-items: center;
-        min-height: 100vh;
-        padding: 1.25rem;
-        background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-        color: var(--text);
+        padding: 1.5rem;
+        transition: background 0.25s ease, color 0.25s ease;
       }
 
+      .page-shell {
+        width: min(100%, 1100px);
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 1.5rem;
+      }
+
+      .hero-panel,
       .card {
-        width: min(100%, 440px);
-        background: var(--card-bg);
+        background: var(--panel);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 22px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
         box-shadow: var(--shadow);
-        padding: 2rem 1.5rem 1.5rem;
+      }
+
+      .hero-panel {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 540px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-panel::before {
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(37, 211, 102, 0.18), transparent 60%);
+        right: -80px;
+        top: -40px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
       }
 
       .brand {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 0.875rem;
-        margin-bottom: 1.25rem;
+        gap: 0.8rem;
+        font-weight: 700;
+        font-size: 1.05rem;
       }
 
       .brand-mark {
-        width: 54px;
-        height: 54px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, #1ae279, #25d366);
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #1ae279, var(--primary));
         display: grid;
         place-items: center;
         color: white;
-        box-shadow: 0 12px 24px rgba(37, 211, 102, 0.28);
-        font-size: 1.6rem;
+        box-shadow: 0 14px 24px rgba(37, 211, 102, 0.26);
+        font-size: 1.35rem;
       }
 
-      h2 {
-        margin: 0;
-        font-size: clamp(1.5rem, 2vw, 2rem);
+      .theme-toggle {
+        border: 1px solid var(--line);
+        background: var(--panel-strong);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 0.65rem 0.95rem;
+        font-size: 0.86rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-1px);
+      }
+
+      .hero-copy {
+        max-width: 530px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(37, 211, 102, 0.1);
+        border: 1px solid rgba(37, 211, 102, 0.12);
+        color: var(--secondary);
+        font-size: 0.72rem;
+        padding: 0.46rem 0.8rem;
+        border-radius: 999px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
         font-weight: 700;
       }
 
-      .subtitle {
-        margin: 0 0 1.5rem;
+      h1 {
+        margin: 1.3rem 0 1rem;
+        font-size: clamp(2.5rem, 4vw, 4.3rem);
+        line-height: 1.04;
+        letter-spacing: -0.06em;
+      }
+
+      .hero-copy p {
+        margin: 0;
+        max-width: 480px;
         color: var(--muted);
-        font-size: 0.96rem;
-        line-height: 1.55;
+        font-size: 1.08rem;
+        line-height: 1.7;
+      }
+
+      .feature-list {
+        margin-top: 1.8rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.9rem;
+      }
+
+      .feature-pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+        color: var(--text);
+        padding: 0.7rem 1rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .card {
+        padding: 1.5rem;
+        width: 100%;
+      }
+
+      .card-inner {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.38rem 0.72rem;
+        border-radius: 999px;
+        background: rgba(37, 211, 102, 0.12);
+        color: var(--secondary);
+        font-size: 0.74rem;
+        font-weight: 700;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--primary);
+        box-shadow: 0 0 12px rgba(37, 211, 102, 0.8);
+      }
+
+      form {
+        display: grid;
+        gap: 1rem;
       }
 
       .field {
-        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
       }
 
       label {
-        display: block;
-        margin-bottom: 0.5rem;
         font-size: 0.82rem;
         font-weight: 700;
         letter-spacing: 0.02em;
-        color: #31444d;
+        color: var(--muted);
       }
 
-      .input-wrap {
-        position: relative;
-      }
-
-      .input-wrap::before {
-        content: "+";
-        position: absolute;
-        left: 0.9rem;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 1.1rem;
-        color: #54656f;
-        pointer-events: none;
-      }
-
-      input[type="tel"] {
-        width: 100%;
+      .input-box {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
         border: 1px solid var(--line);
-        background: #f9fbfd;
-        border-radius: 12px;
-        padding: 0.95rem 1rem 0.95rem 2.3rem;
-        font-size: 1rem;
-        color: var(--text);
+        background: var(--panel-soft);
+        border-radius: 16px;
+        padding: 0.15rem 0.8rem;
         transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
       }
 
-      input[type="tel"]::placeholder {
-        color: #8696a0;
+      .input-box:focus-within {
+        border-color: rgba(37, 211, 102, 0.8);
+        box-shadow: 0 0 0 4px var(--glow);
       }
 
-      input[type="tel"]:focus {
+      select,
+      input {
+        width: 100%;
+        background: transparent;
+        border: none;
         outline: none;
-        border-color: rgba(37, 211, 102, 0.9);
-        box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.14);
-        background: white;
+        color: var(--text);
+        font: inherit;
+      }
+
+      select {
+        padding: 0.9rem 0.4rem;
+        cursor: pointer;
+        appearance: none;
+        background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+        background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 11px) calc(50% - 3px);
+        background-size: 5px 5px, 5px 5px;
+        background-repeat: no-repeat;
+      }
+
+      .code-box {
+        width: 150px;
+        min-width: 150px;
+      }
+
+      .phone-input {
+        padding: 0.9rem 0.2rem;
       }
 
       .error {
-        min-height: 1.25rem;
-        margin-top: 0.5rem;
+        min-height: 1.2rem;
         color: var(--danger);
         background: var(--danger-bg);
-        border: 1px solid rgba(217, 48, 37, 0.12);
-        border-radius: 8px;
-        padding: 0.45rem 0.75rem;
-        font-size: 0.82rem;
+        border: 1px solid rgba(217, 48, 37, 0.14);
+        border-radius: 10px;
+        padding: 0.5rem 0.7rem;
+        font-size: 0.8rem;
         display: none;
       }
 
@@ -151,103 +315,208 @@
         display: block;
       }
 
-      button {
-        width: 100%;
+      .cta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
         margin-top: 0.5rem;
-        padding: 0.95rem 1rem;
+      }
+
+      button[type="submit"] {
         border: none;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: #fff;
+        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+        color: white;
+        border-radius: 16px;
+        padding: 0.95rem 1.1rem;
         font-size: 1rem;
         font-weight: 700;
-        letter-spacing: 0.01em;
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-        box-shadow: 0 12px 24px rgba(37, 211, 102, 0.22);
+        width: 100%;
+        box-shadow: 0 14px 28px rgba(37, 211, 102, 0.22);
+        transition: transform 0.2s ease, filter 0.2s ease;
       }
 
-      button:hover {
-        filter: brightness(1.03);
+      button[type="submit"]:hover {
         transform: translateY(-1px);
-      }
-
-      button:active {
-        transform: translateY(0);
+        filter: brightness(1.02);
       }
 
       .helper {
-        margin-top: 0.85rem;
-        text-align: center;
+        margin-top: 1rem;
+        display: grid;
+        gap: 0.55rem;
         color: var(--muted);
-        font-size: 0.8rem;
+        font-size: 0.82rem;
+      }
+
+      .helper strong {
+        color: var(--text);
       }
 
       .helper code {
-        background: rgba(37, 211, 102, 0.08);
-        border-radius: 6px;
-        padding: 0.12rem 0.35rem;
-        color: #0f8062;
+        background: rgba(37, 211, 102, 0.1);
+        color: var(--secondary);
+        padding: 0.15rem 0.35rem;
+        border-radius: 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       }
 
-      @media (max-width: 420px) {
-        .card {
-          padding: 1.5rem 1rem 1rem;
+      @media (max-width: 860px) {
+        .page-shell {
+          grid-template-columns: 1fr;
         }
 
-        .brand {
-          margin-bottom: 1rem;
+        .hero-panel {
+          min-height: 300px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding: 1rem;
+        }
+
+        .hero-panel,
+        .card {
+          border-radius: 22px;
+          padding: 1rem;
+        }
+
+        .topbar {
+          margin-bottom: 1.5rem;
+        }
+
+        .input-box {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0;
+        }
+
+        .code-box {
+          width: 100%;
+          min-width: 0;
+          border-bottom: 1px solid var(--line);
+          padding-bottom: 0.3rem;
         }
       }
     </style>
   </head>
   <body>
-    <main class="card" aria-label="WhatsApp chat starter">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">✆</div>
-        <h2>WhatsApp Direct Chat</h2>
-      </div>
-
-      <p class="subtitle">
-        Enter your phone number with the country code to open a WhatsApp chat instantly.
-      </p>
-
-      <form id="waForm" novalidate>
-        <div class="field">
-          <label for="phone">Mobile Number</label>
-          <div class="input-wrap">
-            <input
-              type="tel"
-              id="phone"
-              inputmode="numeric"
-              autocomplete="tel"
-              placeholder="e.g. 919876543210"
-              aria-describedby="errorMsg"
-              aria-invalid="false"
-              required
-            />
+    <div class="page-shell">
+      <section class="hero-panel" aria-label="WhatsApp product intro">
+        <div class="topbar">
+          <div class="brand" aria-label="WhatsApp brand">
+            <div class="brand-mark" aria-hidden="true">✆</div>
+            <span>WhatsApp Direct</span>
           </div>
-          <div id="errorMsg" class="error" role="alert" aria-live="polite">
-            Please enter a valid phone number with country code.
-          </div>
+
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+            Dark mode
+          </button>
         </div>
 
-        <button type="submit">Open Chat</button>
-      </form>
+        <div class="hero-copy">
+          <span class="eyebrow">Instant Chat</span>
+          <h1>Open a WhatsApp chat in one click.</h1>
+          <p>
+            Send customers, friends, or leads straight to WhatsApp using a mobile number and country code — no manual dialing required.
+          </p>
 
-      <div class="helper">
-        Example: <code>919876543210</code> or <code>+1 555 123 4567</code>
-      </div>
-    </main>
+          <div class="feature-list" aria-label="Product features">
+            <span class="feature-pill">Fast</span>
+            <span class="feature-pill">Simple</span>
+            <span class="feature-pill">Mobile-ready</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" aria-label="WhatsApp direct chat form">
+        <div class="card-inner">
+          <div class="card-header">
+            <h2>Open chat</h2>
+            <div class="status-badge"><span class="status-dot"></span> Ready</div>
+          </div>
+
+          <form id="waForm" novalidate>
+            <div class="field">
+              <label for="countryCode">Country</label>
+              <div class="input-box code-box">
+                <select id="countryCode" aria-label="Select country code">
+                  <option value="1">United States (+1)</option>
+                  <option value="44">United Kingdom (+44)</option>
+                  <option value="61">Australia (+61)</option>
+                  <option value="91" selected>India (+91)</option>
+                  <option value="971">UAE (+971)</option>
+                  <option value="966">Saudi Arabia (+966)</option>
+                  <option value="92">Pakistan (+92)</option>
+                  <option value="880">Bangladesh (+880)</option>
+                  <option value="234">Nigeria (+234)</option>
+                  <option value="27">South Africa (+27)</option>
+                  <option value="55">Brazil (+55)</option>
+                  <option value="52">Mexico (+52)</option>
+                  <option value="81">Japan (+81)</option>
+                  <option value="65">Singapore (+65)</option>
+                  <option value="33">France (+33)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="phone">Mobile number</label>
+              <div class="input-box">
+                <input
+                  id="phone"
+                  class="phone-input"
+                  type="tel"
+                  inputmode="numeric"
+                  autocomplete="tel"
+                  aria-describedby="errorMsg"
+                  aria-invalid="false"
+                  placeholder="e.g. 9876543210"
+                  required
+                />
+              </div>
+            </div>
+
+            <div id="errorMsg" class="error" role="alert" aria-live="polite">
+              Please enter a valid phone number with country code.
+            </div>
+
+            <div class="cta">
+              <button type="submit">Open WhatsApp</button>
+            </div>
+          </form>
+
+          <div class="helper" aria-live="polite">
+            <div><strong>Example:</strong> <code>919876543210</code> or <code>+1 555 123 4567</code></div>
+            <div>Works with numbers that include country prefixes automatically.</div>
+          </div>
+        </div>
+      </aside>
+    </div>
 
     <script>
       const form = document.getElementById('waForm');
       const phoneInput = document.getElementById('phone');
+      const countryCode = document.getElementById('countryCode');
       const errorMsg = document.getElementById('errorMsg');
+      const themeToggle = document.getElementById('themeToggle');
 
-      function sanitizePhone(value) {
-        const cleaned = value.replace(/[^\d]/g, '').replace(/^0+/, '');
-        return cleaned;
+      function initializeTheme() {
+        const saved = localStorage.getItem('whatsapp-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const darkMode = saved ? saved === 'dark' : prefersDark;
+
+        if (darkMode) {
+          document.body.classList.add('dark');
+          themeToggle.textContent = 'Light mode';
+        } else {
+          themeToggle.textContent = 'Dark mode';
+        }
+      }
+
+      function sanitizeInput(value) {
+        return value.replace(/\D/g, '').replace(/^0+/, '');
       }
 
       function showError(show) {
@@ -260,20 +529,37 @@
         showError(false);
       });
 
+      themeToggle.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark');
+        localStorage.setItem('whatsapp-theme', isDark ? 'dark' : 'light');
+        themeToggle.textContent = isDark ? 'Light mode' : 'Dark mode';
+      });
+
       form.addEventListener('submit', function (event) {
         event.preventDefault();
 
-        const cleanNumber = sanitizePhone(phoneInput.value);
+        const countryPrefix = countryCode.value.replace(/\D/g, '');
+        let userNumber = sanitizeInput(phoneInput.value);
 
-        if (!/^\d{7,15}$/.test(cleanNumber)) {
+        if (userNumber.startsWith(countryPrefix)) {
+          userNumber = userNumber;
+        } else {
+          userNumber = countryPrefix + userNumber;
+        }
+
+        const finalNumber = userNumber.replace(/^0+/, '');
+
+        if (!/^\d{7,15}$/.test(finalNumber)) {
           showError(true);
           phoneInput.focus();
           return;
         }
 
         showError(false);
-        window.location.href = `https://api.whatsapp.com/send?phone=${cleanNumber}`;
+        window.location.href = `https://api.whatsapp.com/send?phone=${finalNumber}`;
       });
+
+      initializeTheme();
     </script>
   </body>
 </html>
