@@ -189,6 +189,13 @@
         color: var(--muted);
       }
 
+      .field-hint {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
       .error {
         display: none;
         min-height: 1.2rem;
@@ -219,6 +226,22 @@
       .button-primary:hover {
         transform: translateY(-1px);
         filter: brightness(1.02);
+      }
+
+      button:focus-visible,
+      select:focus-visible,
+      input:focus-visible {
+        outline: 3px solid rgba(37, 211, 102, 0.55);
+        outline-offset: 3px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
       }
 
       @media (max-width: 480px) {
@@ -274,11 +297,12 @@
             <div class="field">
               <label for="phone">Mobile number</label>
               <div class="input-wrap">
-                <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="e.g. 9876543210" aria-label="Phone number" />
+                <input id="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="24" placeholder="e.g. 9876543210" aria-describedby="phoneHint errorMsg" />
               </div>
+              <p id="phoneHint" class="field-hint">Enter a local number, or a full international number starting with +.</p>
             </div>
 
-            <div id="errorMsg" class="error" role="alert" aria-live="polite">Please enter a valid mobile number.</div>
+            <div id="errorMsg" class="error" role="alert" aria-live="polite"></div>
 
             <button class="button-primary" type="submit">Open WhatsApp</button>
           </form>
@@ -298,27 +322,20 @@
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const darkMode = saved ? saved === 'dark' : prefersDark;
 
-        if (darkMode) {
-          document.body.classList.add('dark');
-          themeToggle.textContent = 'Light';
-        } else {
-          themeToggle.textContent = 'Dark';
-        }
+        document.body.classList.toggle('dark', darkMode);
+        themeToggle.textContent = darkMode ? 'Light' : 'Dark';
       }
 
-      function sanitizePhone(value) {
-        return value.replace(/\D/g, '').replace(/^0+/, '');
-      }
-
-      function showError(show, message = 'Please enter a valid mobile number.') {
-        errorMsg.style.display = show ? 'block' : 'none';
+      function showError(message = '') {
+        const hasError = Boolean(message);
+        errorMsg.style.display = hasError ? 'block' : 'none';
         errorMsg.textContent = message;
-        phoneInput.setAttribute('aria-invalid', String(show));
+        phoneInput.setAttribute('aria-invalid', String(hasError));
       }
 
       phoneInput.addEventListener('input', () => {
         phoneInput.value = phoneInput.value.replace(/[^\d+\s()-]/g, '');
-        showError(false);
+        showError();
       });
 
       themeToggle.addEventListener('click', () => {
@@ -327,30 +344,37 @@
         themeToggle.textContent = isDark ? 'Light' : 'Dark';
       });
 
-      form.addEventListener('submit', function (event) {
+      form.addEventListener('submit', (event) => {
         event.preventDefault();
 
+        const rawNumber = phoneInput.value.trim();
         const countryPrefix = countryCode.value.replace(/\D/g, '');
-        const userNumber = sanitizePhone(phoneInput.value);
 
-        if (!userNumber) {
-          showError(true);
+        if (!rawNumber) {
+          showError('Please enter a mobile number.');
           phoneInput.focus();
           return;
         }
 
-        // Accept numbers entered with or without the selected country prefix.
-        const finalNumber = userNumber.startsWith(countryPrefix)
-          ? userNumber
-          : countryPrefix + userNumber;
+        const hasInternationalPrefix = rawNumber.startsWith('+') || rawNumber.startsWith('00');
+        let digits = rawNumber.replace(/\D/g, '');
+
+        if (rawNumber.startsWith('00')) {
+          digits = digits.slice(2);
+        }
+
+        // For local numbers, remove the national trunk prefix before adding the selected country code.
+        const finalNumber = hasInternationalPrefix
+          ? digits
+          : countryPrefix + digits.replace(/^0+/, '');
 
         if (!/^\d{7,15}$/.test(finalNumber)) {
-          showError(true);
+          showError('Enter a valid number with 7 to 15 digits, including the country code.');
           phoneInput.focus();
           return;
         }
 
-        showError(false);
+        showError();
         window.location.href = `https://api.whatsapp.com/send?phone=${finalNumber}`;
       });
 
